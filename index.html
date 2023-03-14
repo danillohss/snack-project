@@ -17,10 +17,13 @@
 </head>
 
 <body>
-    <nav class="navbar bg-body-tertiary">
+    <nav class="navbar navbar-light" style="background-color: #c5ebd6;">
         <div class="container">
             <span class="navbar-brand mb-0 h1">Monte seu hambúrguer!</span>
         </div>
+        <p id="contato">
+            Criado por ➡️ <a href="https://github.com/danillohss" target="_blank">Danillohss</a>
+        </p>
     </nav>
 
     <div class="container">
@@ -39,12 +42,15 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-6" v-if="this.etapa == 1">
                     <div class="row mt-2">
                         <div class="col">
+                            <p>
+                                Campos obrigatórios (*)
+                            </p>
                             <div class="card">
                                 <div class="card-header">
-                                    Tipo do pão
+                                    * Tipo do pão
                                 </div>
                                 <div class="card-body">
                                     <div class="form-check form-check-inline">
@@ -119,7 +125,7 @@
                         <div class="col">
                             <div class="card">
                                 <div class="card-header">
-                                    Tipo do hambúrguer
+                                    * Tipo do hambúrguer
                                 </div>
                                 <div class="card-body">
                                     <div class="form-check form-check-inline">
@@ -147,11 +153,63 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row mt-2">
+                        <div class="col d-flex justify-content-end">
+                            <button class="btn btn-primary" type="button" @click="etapa = 2"
+                                :disabled="!this.inputHamburguer || !this.inputTipoPao">Fazer Pedido</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6" v-if="this.etapa == 2">
+                    <p>
+                        Campos obrigatórios (*)
+                    </p>
+                    <div class="card">
+                        <div class="card-header">
+                            Informe seus dados
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label class="form-label">* Nome</label>
+                                <input type="text" class="form-control" v-model="nome">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">* Endereço</label>
+                                <input type="text" class="form-control" v-model="endereco">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col d-flex justify-content-between">
+                            <button type="button" class="btn btn-warning" @click="etapa = 1">Refazer
+                                hambúrguer</button>
+                            <button type="button" class="btn btn-success" @click="finalizarPedido()"
+                                :disabled="!this.nome || !this.endereco">Finalizar
+                                pedido!</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6" v-if="this.etapa == 3">
+                    <div class="card">
+                        <div class="card-header">
+                            Pedido confirmado.
+                        </div>
+                        <div class="card-body">
+                            <p>Agora é só aguardar 10 minutinhos!</p>
+                            <p>Chamaremos você embreve!</p>
+                        </div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col d-flex justify-content-between">
+                            <button type="button" class="btn btn-warning" @click="etapa = 2">Voltar</button>
+                            <button type="button" class="btn btn-primary" @click="etapa = 1">Repetir pedido</button>
+                            <button type="button" class="btn btn-success" @click="limparTela()">Novo pedido</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
     <script>
         const vm = new Vue({
             el: '#app',
@@ -160,6 +218,24 @@
                 inputSalada: [],
                 inputMolhos: [],
                 inputHamburguer: null,
+                etapa: 1,
+                nome: '',
+                endereco: '',
+            },
+            methods: {
+                finalizarPedido() {
+                    this.etapa = 3
+                    //Requisição ao backend enviando o pedido
+                },
+                limparTela() {
+                    this.inputTipoPao = null;
+                    this.inputSalada = [];
+                    this.inputMolhos = [];
+                    this.inputHamburguer = null;
+                    this.etapa = 1;
+                    this.nome = '';
+                    this.endereco = '';
+                }
             },
             computed: {
                 pao() {
@@ -220,6 +296,14 @@
             }
         })
     </script>
+    <style>
+        #contato {
+            margin-top: 10px;
+            margin-right: 50px;
+            color: #020202;
+            font-size: 15px;
+        }
+    </style>
 </body>
 
 </html>
